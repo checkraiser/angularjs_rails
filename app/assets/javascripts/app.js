@@ -18,7 +18,7 @@ sampleApp.filter("checkedItems", function () {
 	return resultArr;
 	}
 });
-sampleApp.controller("ToDoCtrl", function ($scope) {
+sampleApp.controller("ToDoCtrl", function ($scope, $http) {
 	$scope.todo = model;
 	$scope.incompleteCount = function () {
 		var count = 0;
@@ -31,6 +31,9 @@ sampleApp.controller("ToDoCtrl", function ($scope) {
 		return $scope.incompleteCount() < 3 ? "label-success" : "label-warning";
 	}
 	$scope.addNewItem = function (actionText) {
-		$scope.todo.items.push({ action: actionText, done: false });
+		var new_item = { action: actionText, done: false };
+		$http.post('/items', {item: new_item}).success(function(data){
+			$scope.todo.items.push(data.item);
+		});
 	}
 });

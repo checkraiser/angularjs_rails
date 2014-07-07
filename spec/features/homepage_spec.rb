@@ -1,18 +1,16 @@
 require 'spec_helper'
 
 feature 'Homepage' do 
-	scenario 'viewing homepage', :js => true do 
-		visit '/'
-		click_link 'Show Orders'
-		expect(page).to have_content 'Show Orders'
+	scenario 'viewing todos', :js => true do 
+		Item.create(action: 'item 1', done: false)
+		visit '/'		
+		expect(page).to have_content 'item 1'
 	end
-
-	scenario 'viewing products', :js => true do 
-		c = Category.create(name: 'Category1')
-		Product.create(name: 'Product1', category: c)
+	scenario 'create todo', :js => true do 
 		visit '/'
-		click_link 'Products'
-		expect(page).to have_content 'Product1'
-		expect(page).to have_content 'Category1'
+		fill_in 'action', :with => 'My first action'
+		click_button 'Add'
+		expect(page).to have_content 'My first action'
+		Item.count.should == 1
 	end
 end
