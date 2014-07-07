@@ -1,22 +1,36 @@
-
-var sampleApp = angular.module('sampleApp', ['ngRoute']);
-
-sampleApp.config(['$routeProvider',
-	function($routeProvider){
-		$routeProvider.
-			when('/AddNewOrder', {
-				templateUrl: '/assets/add_order.html',
-				controller: 'AddOrderController'
-			}).when('/ShowOrders', {
-				templateUrl: '/assets/show_orders.html',
-				controller: 'ShowOrdersController'
-			}).otherwise({
-				redirectTo: '/AddNewOrder'
-			});
-	}]);
-sampleApp.controller('AddOrderController', function($scope){
-	$scope.message = 'This is Add new order screen';
+var model = {
+	user: "Adam",	
+};
+var sampleApp = angular.module('sampleApp', []);
+sampleApp.run(function ($http) {
+	$http.get("items").success(function (data) {
+		model.items = data;
+	});
 });
-sampleApp.controller('ShowOrdersController', function($scope){
-	$scope.message = 'This is Show Orders screen';
+sampleApp.filter("checkedItems", function () {
+	return function (items, showComplete) {
+		var resultArr = [];
+		angular.forEach(items, function (item) {
+			if (item.done == false || showComplete == true) {
+			resultArr.push(item);
+		}
+		});
+	return resultArr;
+	}
+});
+sampleApp.controller("ToDoCtrl", function ($scope) {
+	$scope.todo = model;
+	$scope.incompleteCount = function () {
+		var count = 0;
+		angular.forEach($scope.todo.items, function (item) {
+			if (!item.done) { count++ }
+		});
+		return count;
+	}
+	$scope.warningLevel = function () {
+		return $scope.incompleteCount() < 3 ? "label-success" : "label-warning";
+	}
+	$scope.addNewItem = function (actionText) {
+		$scope.todo.items.push({ action: actionText, done: false });
+	}
 });
