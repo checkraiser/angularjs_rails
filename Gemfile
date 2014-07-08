@@ -48,4 +48,5 @@ group :test do
     gem 'rspec-rails'
     gem 'poltergeist'
     gem 'database_cleaner'
+    gem "turnip"
 end
